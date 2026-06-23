@@ -88,9 +88,9 @@ See `vignette("getting-started")` once available.
 - **Identification**: dismissible component conditions plus the usual exchangeability, positivity, and consistency assumptions (Stensrud et al. 2020; Stensrud & Young 2021). Inspect them with `assumptions(fit)`.
 - **Estimation**: discrete-time pooled logistic hazards for the event of interest, the competing event, and censoring; the CIF follows the sequential `C → D → Y` within-interval convention (`F_Y = Σ h_Y (1 − h_D) S(k−1)`). See `dev/AALEN_JOHANSEN_VS_SEQUENTIAL.md` for the convention's relation to Aalen-Johansen.
 
-## Notes & gotchas
+## Notes
 
-Short answers to the questions that come up most. A full vignette is planned.
+A full vignette is planned.
 
 **What are `A_Y` and `A_D` — why four arms?**
 The separable-effects framework splits the treatment `A` into a component
