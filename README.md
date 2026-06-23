@@ -29,11 +29,11 @@ data(prostate_data)
 # event_type: 0 = censored, 1 = prostate-cancer death (Y), 2 = other-cause death (D)
 
 pt <- to_person_time_competing(prostate_data,
-                     id = "id", time = "event_time", event = "event_type",
-                     treatment = "A",
-                     covariates = c("normal_act", "age_cat", "cv_hist", "hemo_bin"),
-                     event_y = 1, event_d = 2, event_c = 0,
-                     cut_points = 12)
+                               id = "id", time = "event_time", event = "event_type",
+                               treatment = "A",
+                               covariates = c("normal_act", "age_cat", "cv_hist", "hemo_bin"),
+                               event_y = 1, event_d = 2, event_c = 0,
+                               cut_points = 12)
 
 # --- g-formula --------------------------------------------------------------
 fit_g <- causal_competing_risks(pt, method = "gformula")
@@ -70,14 +70,10 @@ boot_i <- bootstrap(fit_i, n_boot = 500, alpha = 0.05, seed = 1)
 plot(risk(fit_g, ci = boot_g), method = "gformula")   # CIF curves + CI ribbons
 plot(risk(fit_i, ci = boot_i), method = "ipw_rep1")   # IPW methods: ipw_rep1 / ipw_rep2
 
-# contrast bridges annotated on the curve at chosen interval indices:
-plot(risk(fit_g, ci = boot_g), method = "gformula",
-     contrast_annotations = "total", eval_times = c(6, 12))
-
 # one or more risk-table panels stacked below the curves (cumulative
 # events/censoring; at_risk is a snapshot):
-plot(risk(fit_g), method = "gformula",
-     risk_table = c("at_risk", "events_y", "censored"))
+plot(risk(fit_g, ci = boot_g), method = "gformula",
+     risk_table = c("events_y", "events_d", "censored"))
 
 # plot(contrast(...)) and plot(diagnostic(...)) are planned for a later release.
 ```
