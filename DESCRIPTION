@@ -1,0 +1,36 @@
+Package: CausalCompetingRisks
+Title: Separable Effects for Causal Inference with Competing Events
+Version: 0.3.1
+Authors@R: c(
+    person("Alex", "Mourer", role = c("aut", "cre"),
+           email = "MourerAlex@users.noreply.github.com")
+    )
+Description: Discrete-time pooled logistic regression estimators for total,
+    direct, and separable effects in survival analysis with competing events.
+    Implements the g-formula and inverse probability weighting (IPW) methods
+    from Stensrud et al. (2020) <doi:10.1080/01621459.2020.1765783> and
+    Stensrud et al. (2021) <doi:10.1007/s10985-021-09530-8>. Provides
+    cumulative incidence estimation, causal contrasts (risk differences and
+    risk ratios), bootstrap confidence intervals, and diagnostic tools for
+    assessing the isolation conditions underlying separable effects.
+License: MIT + file LICENSE
+URL: https://github.com/MourerAlex/RCausalCompetingRisks
+BugReports: https://github.com/MourerAlex/RCausalCompetingRisks/issues
+Depends:
+    R (>= 4.1.0)
+Imports:
+    CausalSurvival (>= 0.1.2),
+    ggplot2,
+    stats
+Remotes:
+    MourerAlex/RCausalSurvival
+Suggests:
+    Hmisc,
+    patchwork,
+    survival,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+Config/roxygen2/version: 8.0.0
