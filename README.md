@@ -90,7 +90,7 @@ See `vignette("getting-started")` once available.
 
 A full vignette is planned.
 
-**What are `A_Y` and `A_D` — why four arms?**
+**What are `A_Y` and `A_D`: why four arms?**
 The separable-effects framework splits the treatment `A` into a component
 `A_Y` acting on the event of interest and `A_D` acting on the competing
 event. Setting them independently gives four arms `(a_Y, a_D) ∈ {0,1}²`. The
@@ -99,7 +99,7 @@ treatment acts on only one pathway — they are what make the direct/indirect
 decomposition possible. The `A_y` / `A_d` columns start equal to the observed
 `A`; the estimator overwrites them per arm.
 
-**Decomposition A vs B — which do I report?**
+**Decomposition A vs B: which do I report?**
 `contrast()` returns both. They are algebraically-equivalent rearrangements of
 the same total effect and agree on it exactly; they differ in which arm
 anchors the separable direct vs indirect split. Report whichever matches your
