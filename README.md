@@ -86,8 +86,8 @@ See `vignette("getting-started")` once available.
 
 - **Estimand**: separable direct and indirect effects on the cumulative incidence of the event of interest, in the presence of a competing event.
 - **Identification**: dismissible component conditions plus the usual exchangeability, positivity, and consistency assumptions (Stensrud et al. 2020; Stensrud & Young 2021). Inspect them with `assumptions(fit)`.
-- **Estimation**: discrete-time pooled logistic hazards for the event of interest, the competing event, and censoring; the CIF follows the sequential `C → D → Y` within-interval convention (`F_Y = Σ h_Y (1 − h_D) S(k−1)`). See `dev/AALEN_JOHANSEN_VS_SEQUENTIAL.md` for the convention's relation to Aalen-Johansen.
-
+- **Estimation**: discrete-time pooled logistic hazards for the event of interest, the competing event, and censoring; the CIF follows the sequential `C → D → Y` within-interval convention (`F_Y = Σ h_Y (1 − h_D) S(k−1)`).
+  
 ## Notes
 
 A full vignette is planned.
