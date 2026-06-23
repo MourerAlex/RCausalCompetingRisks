@@ -1,12 +1,12 @@
 # CausalCompetingRisks
 
-> **Status**: pre-implementation. Skeleton under active development. See `dev/CAUSAL_SURVIVAL_SPEC.md` and `dev/ARCHITECTURE.md` for the full specification and internal layout.
-
+> **Status**: pre-implementation, under active development.
+> 
 R package for causal inference on **competing-event** survival outcomes, using discrete-time pooled logistic regression. Implements the **separable effects** framework (Stensrud et al. 2020) to decompose a treatment's total effect into a separable **direct** effect (path A → Y) and a separable **indirect** effect (path A → D → Y, through the competing event). Provides parametric g-formula and inverse probability weighting estimators for the cumulative incidence function (CIF) of each event under static, baseline-only treatment regimes, with bootstrap confidence intervals and identifying-assumption accessors.
 
 The treatment `A` is conceptually split into a component `A_Y` acting on the event of interest and a component `A_D` acting on the competing event. The four counterfactual arms `(a_Y, a_D) ∈ {0,1}²` (`arm_11`, `arm_00`, `arm_10`, `arm_01`) yield two algebraically-equivalent decompositions of the total effect (Decomposition A and B).
 
-Second package of a two-package ecosystem: [CausalSurvival](https://github.com/MourerAlex/CausalSurvival) handles single-event survival and supplies the shared discrete-time machinery (person-time expansion, hazard fitting, IPW/IPCW weights, bootstrap engine) that this package imports and extends.
+Second package of a two-package ecosystem: [CausalSurvival](https://github.com/MourerAlex/RCausalSurvival) handles single-event survival and supplies the shared discrete-time machinery (person-time expansion, hazard fitting, IPW/IPCW weights, bootstrap engine) that this package imports and extends.
 
 ## Installation
 
@@ -14,8 +14,8 @@ Not yet on CRAN. Development version:
 
 ```r
 # install.packages("remotes")
-remotes::install_github("MourerAlex/CausalSurvival")        # required dependency
-remotes::install_github("MourerAlex/CausalCompetingRisks")
+remotes::install_github("MourerAlex/RCausalSurvival")        # required dependency
+remotes::install_github("MourerAlex/RCausalCompetingRisks")
 ```
 
 ## Usage
