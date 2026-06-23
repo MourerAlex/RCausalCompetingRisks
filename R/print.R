@@ -446,10 +446,9 @@ print.causal_competing_risks_diagnostic <- function(x, ...) {
       if (is.null(chk)) next
       any_printed <- TRUE
       cat(sprintf(
-        "  [%s]  converged=%s  fitted in [%.3g, %.3g]\n",
+        "  [%s]  converged=%s\n",
         chk$label %||% m,
-        if (isTRUE(chk$converged)) "TRUE" else "FALSE",
-        chk$min_fitted, chk$max_fitted
+        if (isTRUE(chk$converged)) "TRUE" else "FALSE"
       ))
       if (length(chk$glm_warnings) > 0) {
         cat("    glm warnings:\n")
