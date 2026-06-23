@@ -12,12 +12,13 @@
 #' @param count Character. One of:
 #'   \describe{
 #'     \item{`"at_risk"`}{Number of subjects with a row at k (still under
-#'       observation at the start of interval k).}
-#'     \item{`"events_y"`}{Number of primary (Y) events occurring in
+#'       observation at the start of interval k). A snapshot, not cumulative.}
+#'     \item{`"events_y"`}{**Cumulative** number of primary (Y) events through
 #'       interval k.}
-#'     \item{`"events_d"`}{Number of competing (D) events occurring in
+#'     \item{`"events_d"`}{**Cumulative** number of competing (D) events
+#'       through interval k.}
+#'     \item{`"censored"`}{**Cumulative** number of subjects censored through
 #'       interval k.}
-#'     \item{`"censored"`}{Number of subjects censored in interval k.}
 #'   }
 #'
 #' @return A data.frame with:
@@ -83,6 +84,11 @@ risk_table_internal <- function(pt_data, id_col, trt_col, cut_times, count) {
         as.integer(sum(rows_a_k$c_event, na.rm = TRUE))
       }
     }, integer(1))
+    # Events (Y, D) and censoring are reported cumulatively: the number of
+    # subjects who have had the event / been censored through interval k.
+    # Each subject contributes a 1 in exactly one interval, so cumsum of the
+    # per-interval counts gives the running total. at_risk stays a snapshot.
+    if (count %in% c("events_y", "events_d", "censored")) vals <- cumsum(vals)
     result[[col_name]] <- vals
   }
   result

@@ -20,7 +20,7 @@ length \code{K_max} (the per-subject row count).}
 Data frame with one row per subject-time, with \code{A_y} and \code{A_d}
 set to the specified arm values. The \code{k} column holds the integer
 interval index \verb{1..K_max}, matching the integer-\code{k} encoding the
-hazard models were fit on (see \code{\link[CausalSurvival:fit_hazard_models]{fit_hazard_models()}}).
+hazard models were fit on (see \code{\link[=fit_hazard_models]{fit_hazard_models()}}).
 }
 \description{
 Expands baseline data (one row per subject) to person-time format for a

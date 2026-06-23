@@ -20,10 +20,14 @@
 #'   One or two of:
 #'   `"total"`, `"sep_direct_A"`, `"sep_indirect_A"`, `"sep_direct_B"`,
 #'   `"sep_indirect_B"`.
-#' @param risk_table NULL (default, no table) or one of `"at_risk"`,
-#'   `"events_y"`, `"events_d"`, `"censored"`. Stacks a counts table below
-#'   the curves via [/]. The `risk()` accessor stores the
-#'   needed references — no need to re-pass `fit`.
+#' @param curves Logical. `TRUE` (default) draws the cumulative-incidence
+#'   curves panel; `FALSE` suppresses it so only the requested `risk_table`
+#'   panel(s) render (table-only mode). Requires a non-NULL `risk_table`.
+#' @param risk_table NULL (default, no table) or a character vector with
+#'   entries in `"at_risk"`, `"events_y"`, `"events_d"`, `"censored"`. One
+#'   counts panel per entry is stacked below the curves via [/]. The
+#'   `risk()` accessor stores the needed references — no need to re-pass
+#'   `fit`.
 #' @param risk_table_height Numeric. Height of the risk table relative to
 #'   the main plot (which is 1). Default `0.23` (the table is ~23% of the
 #'   main plot's height). Increase to give the table more room.
@@ -66,6 +70,7 @@ plot.causal_competing_risks_risk <- function(x,
                                 arms = NULL,
                                 eval_times = NULL,
                                 contrast_annotations = NULL,
+                                curves = TRUE,
                                 risk_table = NULL,
                                 risk_table_height = 0.23,
                                 arm_colors = NULL,
@@ -320,7 +325,7 @@ plot.causal_competing_risks_risk <- function(x,
       )
   }
 
-  # --- Risk table (stacked below via patchwork) ---
+  # --- Risk table panel(s) (one per requested count, stacked via patchwork) ---
   if (!is.null(risk_table)) {
     if (!requireNamespace("patchwork", quietly = TRUE)) {
       stop(
@@ -337,22 +342,54 @@ plot.causal_competing_risks_risk <- function(x,
         call. = FALSE
       )
     }
-    tbl_plot <- build_risk_table_plot(
-      pt_data   = x$person_time,
-      id_col    = x$id_col,
-      trt_col   = x$treatment_col,
-      cut_times = x$times,
-      count     = risk_table,
-      base_size = base_size,
-      x_breaks  = shared_x_ticks,
-      x_limits  = shared_x_limits
-    )
-    # heights = c(1, risk_table_height): main plot 1 unit, table is a
-    # fraction of that (default 0.23 ~= the previous 3:0.7 ratio).
-    p <- wrap_plots(
-      p, tbl_plot, ncol = 1,
-      heights = c(1, risk_table_height)
-    )
+    valid_counts <- c("at_risk", "events_y", "events_d", "censored")
+    if (!is.character(risk_table)) {
+      stop("`risk_table` must be NULL or a character vector with entries in: ",
+           paste(shQuote(valid_counts), collapse = ", "), ".",
+           call. = FALSE)
+    }
+    bad_rt <- setdiff(risk_table, valid_counts)
+    if (length(bad_rt) > 0L) {
+      stop("`risk_table` has unknown entries: ",
+           paste(shQuote(bad_rt), collapse = ", "),
+           ". Valid: ", paste(shQuote(valid_counts), collapse = ", "), ".",
+           call. = FALSE)
+    }
+
+    n_tbl <- length(risk_table)
+    tbl_plots <- lapply(seq_along(risk_table), function(i) {
+      build_risk_table_plot(
+        pt_data   = x$person_time,
+        id_col    = x$id_col,
+        trt_col   = x$treatment_col,
+        cut_times = x$times,
+        count     = risk_table[[i]],
+        base_size = base_size,
+        x_breaks  = shared_x_ticks,
+        x_limits  = shared_x_limits,
+        # Bottom-most panel gets the cut-time tick labels; the ones above
+        # stay clean (curves panel / upper tables carry no x-axis text).
+        show_x_axis = (i == n_tbl)
+      )
+    })
+
+    if (isTRUE(curves)) {
+      # curves on top + risk-table panel(s) below. `risk_table_height` is
+      # the per-panel ratio (curves panel = 1); total bottom = N * h.
+      p <- wrap_plots(
+        c(list(p), tbl_plots), ncol = 1,
+        heights = c(1, rep(risk_table_height, length(tbl_plots)))
+      )
+    } else {
+      # Table-only: drop curves panel, stack the table panels equally.
+      p <- wrap_plots(
+        tbl_plots, ncol = 1,
+        heights = rep(1, length(tbl_plots))
+      )
+    }
+  } else if (!isTRUE(curves)) {
+    stop("`curves = FALSE` requires a non-NULL `risk_table` ",
+         "(nothing else would render).", call. = FALSE)
   }
 
   p
@@ -367,12 +404,16 @@ plot.causal_competing_risks_risk <- function(x,
 #' @param fit A "causal_competing_risks_fit" object.
 #' @param count Character, one of the accepted values in [risk_table()].
 #' @param base_size Base font size (inherited from the parent plot call).
+#' @param show_x_axis Logical. Draw the x-axis tick labels/ticks. Set
+#'   `FALSE` for upper panels when stacking multiple tables so only the
+#'   bottom-most panel carries the shared axis.
 #' @return A ggplot2 object.
 #' @family internal
 #' @keywords internal
 build_risk_table_plot <- function(pt_data, id_col, trt_col,
                                   cut_times, count, base_size = 11,
-                                  x_breaks = NULL, x_limits = NULL) {
+                                  x_breaks = NULL, x_limits = NULL,
+                                  show_x_axis = TRUE) {
   # Include k = 0 (baseline) as an explicit time point so the table covers
   # the full range from origin to max(cut_times).
   table_times <- c(0, cut_times)
@@ -445,9 +486,12 @@ build_risk_table_plot <- function(pt_data, id_col, trt_col,
                                                  linewidth = 0.4),
       axis.line.y.left   = element_line(color = "black",
                                                  linewidth = 0.4),
-      axis.text.x      = element_text(),     # show tick labels
-      axis.ticks.x     = element_line(color = "black",
-                                               linewidth = 0.3),
+      # Only the bottom-most stacked panel shows the x-axis tick labels;
+      # upper panels stay clean so the shared axis reads once.
+      axis.text.x      = if (show_x_axis) element_text() else element_blank(),
+      axis.ticks.x     = if (show_x_axis) {
+                           element_line(color = "black", linewidth = 0.3)
+                         } else element_blank(),
       axis.ticks.y     = element_blank(),
       axis.text.y      = element_text(face = "bold"),
       axis.title.y     = element_text(face = "bold", angle = 90),

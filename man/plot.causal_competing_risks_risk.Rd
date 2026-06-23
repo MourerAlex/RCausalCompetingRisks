@@ -10,6 +10,7 @@
   arms = NULL,
   eval_times = NULL,
   contrast_annotations = NULL,
+  curves = TRUE,
   risk_table = NULL,
   risk_table_height = 0.23,
   arm_colors = NULL,
@@ -45,10 +46,15 @@ One or two of:
 \code{"total"}, \code{"sep_direct_A"}, \code{"sep_indirect_A"}, \code{"sep_direct_B"},
 \code{"sep_indirect_B"}.}
 
-\item{risk_table}{NULL (default, no table) or one of \code{"at_risk"},
-\code{"events_y"}, \code{"events_d"}, \code{"censored"}. Stacks a counts table below
-the curves via \link{/}. The \code{risk()} accessor stores the
-needed references — no need to re-pass \code{fit}.}
+\item{curves}{Logical. \code{TRUE} (default) draws the cumulative-incidence
+curves panel; \code{FALSE} suppresses it so only the requested \code{risk_table}
+panel(s) render (table-only mode). Requires a non-NULL \code{risk_table}.}
+
+\item{risk_table}{NULL (default, no table) or a character vector with
+entries in \code{"at_risk"}, \code{"events_y"}, \code{"events_d"}, \code{"censored"}. One
+counts panel per entry is stacked below the curves via \link{/}. The
+\code{risk()} accessor stores the needed references — no need to re-pass
+\code{fit}.}
 
 \item{risk_table_height}{Numeric. Height of the risk table relative to
 the main plot (which is 1). Default \code{0.23} (the table is ~23\% of the

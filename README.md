@@ -23,24 +23,17 @@ remotes::install_github("MourerAlex/RCausalCompetingRisks")
 ```r
 library(CausalCompetingRisks)
 
-# --- Synthetic competing-risks data ----------------------------------------
-# event_type: 0 = censored, 1 = primary event (Y), 2 = competing event (D)
-set.seed(42); n <- 300
-df <- data.frame(id = seq_len(n), L1 = rnorm(n), L2 = rbinom(n, 1, 0.4))
-df$A      <- rbinom(n, 1, plogis(-0.2 + 0.3 * df$L1 + 0.5 * df$L2))
-hY        <- plogis(-2.5 + 0.3 * df$A + 0.2 * df$L1 + 0.4 * df$L2)
-hD        <- plogis(-2.8 - 0.2 * df$A + 0.3 * df$L2)
-tY        <- rgeom(n, hY) + 1L
-tD        <- rgeom(n, hD) + 1L
-df$event_time <- pmin(tY, tD, 10L)
-df$event_type <- ifelse(df$event_time == 10L, 0L,
-                        ifelse(tY <= tD, 1L, 2L))
+# --- Real data: Byar & Green (1980) prostate trial (ships with package) -----
+data(prostate_data)
+# A: 1 = DES, 0 = placebo
+# event_type: 0 = censored, 1 = prostate-cancer death (Y), 2 = other-cause death (D)
 
-pt <- to_person_time_competing(df,
+pt <- to_person_time_competing(prostate_data,
                      id = "id", time = "event_time", event = "event_type",
-                     treatment = "A", covariates = c("L1", "L2"),
+                     treatment = "A",
+                     covariates = c("normal_act", "age_cat", "cv_hist", "hemo_bin"),
                      event_y = 1, event_d = 2, event_c = 0,
-                     cut_points = 10)
+                     cut_points = 12)
 
 # --- g-formula --------------------------------------------------------------
 fit_g <- causal_competing_risks(pt, method = "gformula")
@@ -69,15 +62,24 @@ summary(fit_g, ci = boot_g)
 print(risk_table(fit_g, count = "at_risk"))
 
 # --- Plot -------------------------------------------------------------------
-# Each fit needs its OWN bootstrap. The replicates are method-specific —
-# bootstrap(fit_g) stores g-formula CIFs, so using boot_g on fit_i's plot
-# would silently show g-formula bands on an IPW curve.
+# plot() takes `method` (a fit can hold several). Each fit needs its OWN
+# bootstrap — the replicates are method-specific, so reusing one fit's
+# bootstrap on another's plot would silently mislabel the bands.
 boot_i <- bootstrap(fit_i, n_boot = 500, alpha = 0.05, seed = 1)
 
-plot(risk(fit_g, ci = boot_g))       # CIF curves per arm with CI ribbons
-plot(risk(fit_i, ci = boot_i))
-plot(contrast(fit_g, method = "gformula", ci = boot_g))  # decomposition plot
-plot(diagnostic(fit_g))
+plot(risk(fit_g, ci = boot_g), method = "gformula")   # CIF curves + CI ribbons
+plot(risk(fit_i, ci = boot_i), method = "ipw_rep1")   # IPW methods: ipw_rep1 / ipw_rep2
+
+# contrast bridges annotated on the curve at chosen interval indices:
+plot(risk(fit_g, ci = boot_g), method = "gformula",
+     contrast_annotations = "total", eval_times = c(6, 12))
+
+# one or more risk-table panels stacked below the curves (cumulative
+# events/censoring; at_risk is a snapshot):
+plot(risk(fit_g), method = "gformula",
+     risk_table = c("at_risk", "events_y", "censored"))
+
+# plot(contrast(...)) and plot(diagnostic(...)) are planned for a later release.
 ```
 
 See `vignette("getting-started")` once available.

@@ -7,7 +7,7 @@
 predict_hazards(clone, models)
 }
 \arguments{
-\item{clone}{Data frame. Cloned person-time data from \code{\link[CausalSurvival:make_clone]{make_clone()}}.}
+\item{clone}{Data frame. Cloned person-time data from \code{\link[=make_clone]{make_clone()}}.}
 
 \item{models}{List of fitted glm objects.}
 }

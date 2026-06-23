@@ -11,8 +11,8 @@ Discrete-time pooled logistic regression estimators for total, direct, and separ
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/MourerAlex/CausalCompetingRisks}
-  \item Report bugs at \url{https://github.com/MourerAlex/CausalCompetingRisks/issues}
+  \item \url{https://github.com/MourerAlex/RCausalCompetingRisks}
+  \item Report bugs at \url{https://github.com/MourerAlex/RCausalCompetingRisks/issues}
 }
 
 }

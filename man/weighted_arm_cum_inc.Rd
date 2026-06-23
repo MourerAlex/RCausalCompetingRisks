@@ -8,7 +8,7 @@ weighted_arm_cum_inc(pt_data, treatment, a_y, a_d, cut_times, rep, id_col)
 }
 \arguments{
 \item{pt_data}{Person-time data frame with all weight columns
-pre-built by \code{\link[CausalSurvival:fit_ipw]{fit_ipw()}}.}
+pre-built by \code{\link[=fit_ipw]{fit_ipw()}}.}
 
 \item{treatment}{Character. Treatment column name.}
 
@@ -29,6 +29,6 @@ Subsets to the standing-in arm, reads the rep-specific swap weight,
 the censoring weight (IPCW), and the propensity weight (W_A) from
 pre-built columns on \code{pt_data}, then computes weighted cumulative
 incidence. All source weights (\code{w_cens}, \code{w_a}, swap weights) are
-constructed and truncated upstream by \code{\link[CausalSurvival:fit_ipw]{fit_ipw()}}.
+constructed and truncated upstream by \code{\link[=fit_ipw]{fit_ipw()}}.
 }
 \keyword{internal}

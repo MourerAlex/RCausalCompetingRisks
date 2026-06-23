@@ -12,12 +12,13 @@ risk_table(fit, count = c("at_risk", "events_y", "events_d", "censored"))
 \item{count}{Character. One of:
 \describe{
 \item{\code{"at_risk"}}{Number of subjects with a row at k (still under
-observation at the start of interval k).}
-\item{\code{"events_y"}}{Number of primary (Y) events occurring in
+observation at the start of interval k). A snapshot, not cumulative.}
+\item{\code{"events_y"}}{\strong{Cumulative} number of primary (Y) events through
 interval k.}
-\item{\code{"events_d"}}{Number of competing (D) events occurring in
+\item{\code{"events_d"}}{\strong{Cumulative} number of competing (D) events
+through interval k.}
+\item{\code{"censored"}}{\strong{Cumulative} number of subjects censored through
 interval k.}
-\item{\code{"censored"}}{Number of subjects censored in interval k.}
 }}
 }
 \value{

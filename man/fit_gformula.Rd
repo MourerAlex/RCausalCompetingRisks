@@ -10,7 +10,7 @@ fit_gformula(pt_data, models, cut_times, id_col)
 \item{pt_data}{Data frame in person-time format. Every subject must have
 a row at \code{k = 0} (enforced by \code{\link[=validate_person_time]{validate_person_time()}}).}
 
-\item{models}{List of fitted glm objects from \code{\link[CausalSurvival:fit_hazard_models]{fit_hazard_models()}}.}
+\item{models}{List of fitted glm objects from \code{\link[=fit_hazard_models]{fit_hazard_models()}}.}
 
 \item{cut_times}{Numeric vector. Time cut points.}
 

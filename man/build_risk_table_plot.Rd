@@ -12,13 +12,18 @@ build_risk_table_plot(
   count,
   base_size = 11,
   x_breaks = NULL,
-  x_limits = NULL
+  x_limits = NULL,
+  show_x_axis = TRUE
 )
 }
 \arguments{
 \item{count}{Character, one of the accepted values in \code{\link[=risk_table]{risk_table()}}.}
 
 \item{base_size}{Base font size (inherited from the parent plot call).}
+
+\item{show_x_axis}{Logical. Draw the x-axis tick labels/ticks. Set
+\code{FALSE} for upper panels when stacking multiple tables so only the
+bottom-most panel carries the shared axis.}
 
 \item{fit}{A "causal_competing_risks_fit" object.}
 }
